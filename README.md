@@ -1,3 +1,4 @@
+[[TOC]]
 # utilsEpyon
 A collection of my utilities that will run on linux and windows
 ## head
@@ -95,6 +96,7 @@ cat hexdump.c | ./hexdump -i -x -o -b -l 4 | head
 0x0000000000000098: [ y ]  [ o ]  [ n ]  [ . ]  [ g ]  [ i ]  [ t ]  [ CR]
 ```
 ## ipcalc
+Calculate CIDR IP address
 ### Help:
 ``` bash
 ./ipcalc -h

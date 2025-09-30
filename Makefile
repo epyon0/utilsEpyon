@@ -11,3 +11,6 @@ install : ./src/ipcalc.c ./lib/libEpyon/misc.h
 
 	$(CC)  $(CFLAGS) -o ./bin/head ./src/head.c
 	$(WCC) $(CFLAGS) -o ./bin/head.exe ./src/head.c
+
+	$(CC)  $(CFLAGS) -o ./bin/nl ./src/nl.c
+	$(WCC) $(CFLAGS) -o ./bin/nl.exe ./src/nl.c

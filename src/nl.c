@@ -11,22 +11,30 @@
 int main(void) {
     if (!isatty(0)) {
         char ch;
-        int count = 0;
+        size_t count = 1;
+        bool firstRun = true;
 
         while (true) {
-            fread(&ch, 1, 1, stdin);
+            size_t rc = fread(&ch, 1, 1, stdin);
 
-            if (count == 0) {
-                printf("%d ", count);
+            if (rc < 1) {
+                break;
+            }
+
+            if (firstRun) {
+                printf("%6lld  ", (long long int)count);
+                firstRun = false;
+                count++;
             }
 
             printf("%c", ch);
             
             if (ch == '\n') {
-                printf("%d ", count);
+                printf("%6lld  ", (long long int)count);
+                count++;
             }
-
-            count++;
         }
+
+        printf("\n");
     }
 }

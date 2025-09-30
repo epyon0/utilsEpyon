@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "../lib/libEpyon/misc.h" // git clone git@github.com:epyon0/libEpyon.git
 
-vverbose = false;
+bool vverbose = false;
 char dBuff[1000];
 
 void parseIP(const char *ipString);

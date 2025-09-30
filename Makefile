@@ -9,5 +9,5 @@ install : ./src/ipcalc.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/hexdump ./src/hexdump.c
 	$(WCC) $(CFLAGS) -o ./bin/hexdump.exe ./src/hexdump.c
 
-#$(CC)  $(CFLAGS) -o ./bin/head ./src/head.c
-#$(WCC) $(CFLAGS) -o ./bin/head.exe ./src/head.c
+	$(CC)  $(CFLAGS) -o ./bin/head ./src/head.c
+	$(WCC) $(CFLAGS) -o ./bin/head.exe ./src/head.c

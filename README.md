@@ -2,7 +2,56 @@
 A collection of my utilities that will run on linux and windows
 ## head
 ### Help:
+```
+./bin/head -h
+
+Display portion of the begining of a file
+
+./bin/head <FILE>
+OR
+cat <FILE> | ./bin/head
+
+[-h || --help]        Print this help message
+[-v || --verbose]     Turn on verbose output
+[-n || --lines] <INT> Print the first <INT> lines, Default: 10
+<FILE>                File to process
+
+Return Codes:
+  0 = Success
+  1 = File inaccessible
+  2 = No file or input stream given
+  3 = Invalid line limit given
+```
 ### Examples:
+```
+cat ./src/head.c | ./bin/head
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "../lib/libEpyon/misc.h" // git clone git@github.com:epyon0/libEpyon.git
+
+#ifdef WIN32
+#include <io.h>
+#define F_OK 0
+#define access _access
+```
+./bin/head ./src/head.c -n 13
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "../lib/libEpyon/misc.h" // git clone git@github.com:epyon0/libEpyon.git
+
+#ifdef WIN32
+#include <io.h>
+#define F_OK 0
+#define access _access
+#endif
+
+char dBuff[1024] = {'\0'};
+```
+```
 ## hexdump
 Dump file contents
 ### Help:

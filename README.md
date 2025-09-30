@@ -36,6 +36,7 @@ cat ./src/head.c | ./bin/head
 #define F_OK 0
 #define access _access
 ```
+```
 ./bin/head ./src/head.c -n 13
 #include <stdio.h>
 #include <string.h>
@@ -50,7 +51,6 @@ cat ./src/head.c | ./bin/head
 #endif
 
 char dBuff[1024] = {'\0'};
-```
 ```
 ## hexdump
 Dump file contents

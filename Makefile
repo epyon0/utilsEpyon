@@ -2,7 +2,7 @@ CC = gcc
 WCC = x86_64-w64-mingw32-gcc
 CFLAGS = -W -Wall -Wextra -g
 
-all : ipcalc hexdump head nl
+all : ipcalc hexdump head nl base64
 
 base64 : ./src/base64.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/base64 ./src/base64.c

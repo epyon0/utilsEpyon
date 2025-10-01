@@ -41,6 +41,10 @@ int main(const int argc, const char *argv[]) {
                 wrapLimit = atoi(argv[i+1]);
                 continue;
             }
+
+            if ((strncmp(arg, "-v", sizeof("-v")) == 0) || (strncmp(arg, "--verbose", sizeof("--verbose")) == 0)) {
+                continue;
+            }
         }
     }
 }

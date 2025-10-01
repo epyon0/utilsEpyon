@@ -3,7 +3,11 @@ WCC = x86_64-w64-mingw32-gcc
 CFLAGS = -W -Wall -Wextra -g
 
 all : ipcalc hexdump head nl
-	
+
+base64 : ./src/base64.c ./lib/libEpyon/misc.h
+	$(CC)  $(CFLAGS) -o ./bin/base64 ./src/base64.c
+	$(WCC) $(CFLAGS) -o ./bin/base64.exe ./src/base64.c
+
 ipcalc : ./src/ipcalc.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/ipcalc ./src/ipcalc.c
 	$(WCC) $(CFLAGS) -o ./bin/ipcalc.exe ./src/ipcalc.c

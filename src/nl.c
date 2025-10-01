@@ -13,9 +13,10 @@ int main(void) {
         char ch;
         size_t count = 1;
         bool firstRun = true;
+        size_t rc;
 
         while (true) {
-            size_t rc = fread(&ch, 1, 1, stdin);
+            rc = fread(&ch, 1, 1, stdin);
 
             if (rc < 1) {
                 break;

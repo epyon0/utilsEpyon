@@ -97,6 +97,7 @@ int processData(FILE *fp) {
         prevVerboseValue = getverbose();
         setverbose(true);
         snprintf(dBuff, sizeof(dBuff), "Invalid line limit of: %d", linelimit);
+        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
         setverbose(prevVerboseValue);
         return(3);
     }

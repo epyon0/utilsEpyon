@@ -36,7 +36,7 @@ int main(const int argc, const char *argv[]) {
                 printf("[-v || --verbose]     Turn on verbose output\n");
                 printf("[-n || --lines] <INT> Print the first <INT> lines, Default: %d\n", linelimit);
                 printf("<FILE>                File to process\n");
-                printf("\nReturn Codes:\n");
+                printf("\nReturn Values:\n");
                 printf("  0 = Success\n");
                 printf("  1 = File inaccessible\n");
                 printf("  2 = No file or input stream given\n");

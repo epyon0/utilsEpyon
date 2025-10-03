@@ -15,7 +15,7 @@ char filename[256] = {'\0'};
 bool encode = true, prevVerboseValue, rfc3501 = false, url = false;
 int wrapLimit = 76;
 
-char *processData(FILE *fp);
+char *processData(FILE *fp, char *output);
 
 int main(const int argc, const char *argv[]) {
     if (argc > 1) {
@@ -89,48 +89,43 @@ int main(const int argc, const char *argv[]) {
         }
     }
 
-    char *output = malloc()
+    char *output = malloc(sizeof(char));
 
     if (filename[0] == '\0') {
         verbose("Filename not given", __FILE__, __LINE__, __FUNCTION__);
         if (!isatty(0)) {
             verbose("Detected STDIN", __FILE__, __LINE__, __FUNCTION__);
-            int rc = processData(stdin);
-            if (rc != 0) {
-                return(rc);
-            }
+            char *b64string = processData(stdin, output);
+            printf("%s", b64string);
         } else {
             prevVerboseValue = getverbose();
             setverbose(true);
             verbose("No file or input stream given", __FILE__, __LINE__, __FUNCTION__);
             setverbose(prevVerboseValue);
-            return(2);
+            exit(2);
         }
     } else {
         FILE *fp = fopen(filename, "rb");
-        int rc = processData(fp);
+        char *b64string = processData(fp, output);
         fclose(fp);
-        if (rc != 0) {
-            return(rc);
-        }
+        printf("%s", b64string);
     }
 }
 
-char *processData(FILE *fp) {
+char *processData(FILE *fp, char *output) {
     if (wrapLimit < 1) {
         prevVerboseValue = getverbose();
         setverbose(true);
         snprintf(dBuff, sizeof(dBuff), "Invalid wrap limit of: %d", wrapLimit);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
         setverbose(prevVerboseValue);
-        return(3);
+        exit(3);
     }
 
-    char ch;
-    int count = 1;
-    size_t rc;
+    size_t count = 1, rc;
     char lookup[64];
     char padding = '=';
+    uint32_t buff;
 
     for (int i = 48; i < 58; i++) {
         lookup[4+i] = (char)i;
@@ -146,6 +141,7 @@ char *processData(FILE *fp) {
         verbose("RFC 3501", __FILE__, __LINE__, __FUNCTION__);
         lookup[62] = '+';
         lookup[63] = ',';
+        padding = ' ';
     } else {
         verbose("RFC 4846", __FILE__, __LINE__, __FUNCTION__);
         snprintf(dBuff, sizeof(dBuff), "URL Encoding: %s", url ? "true" : "false");
@@ -160,18 +156,47 @@ char *processData(FILE *fp) {
     }
 
     while (true) {
-        rc = fread(&ch, 1, 1, fp);
+        rc = fread(&buff, 1, 3, fp);
 
-        printf("%c", ch);
-
-        if (rc < 1) {
+        if (rc < 3) { // do stuff if 2 or 1 to..
             break;
         }
 
-        if (i % 4 == 0) {
-
+        if (count % 4 == 0) {
+            buff = (0x00FFFFFF & buff);
+            output = realloc(output, count * sizeof(char) + 1);
+            output[(sizeof(char) * count) - 1] = lookup[(0x3F & buff)];
+            count++;
+            continue;
+        } else if (count % 3 == 0) {
+            output = realloc(output, count * sizeof(char));
+            output[(sizeof(char) * count) - 1] = lookup[((0xFC0 & buff)>>6)];
+            count++;
+            continue;
+        } else if (count % 2 == 0) {
+            output = realloc(output, count * sizeof(char));
+            output[(sizeof(char) * count) - 1] = lookup[((0x3F000 & buff)>>12)];
+            count++;
+            continue;
+        } else {
+            output = realloc(output, count * sizeof(char));
+            output[(sizeof(char) * count) - 1] = lookup[((0xFC0000 & buff)>>18)];
+            count++;
+            continue;
         }
-
-        count++;
     }
+
+    if (rc == 1) {
+        output = realloc(output, (count * sizeof(char)) + 3);
+        output[sizeof(output) - 3] = padding;
+        output[sizeof(output) - 2] = padding;
+    }
+
+    if (rc == 2) {
+        output = realloc(output, (count * sizeof(char)) + 2);
+        output[sizeof(output) - 2] = padding;
+    }
+
+    output[sizeof(output) - 1] = '\0';
+    return output;
 }

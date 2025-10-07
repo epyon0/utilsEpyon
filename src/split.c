@@ -84,7 +84,7 @@ int main(const int argc, const char *argv[]) {
         snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", filename);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
 
-        FILE *fp = fopen(filename, "rb");
+        FILE *fp = fopen(filename, "r");
 
         if (fp == NULL) {
             verboseValue = getverbose();
@@ -113,6 +113,18 @@ int main(const int argc, const char *argv[]) {
 }
 
 int split(FILE *fp) {
+    int rc;
+    char buff;
+
+    while (true) {
+        rc = fread(&buff, 1, 1, fp);
+    if (rc < 1) {
+        break;
+    }
+
+    printf("%c", buff);
+    
+    }
 
     return(0);
 }

@@ -291,3 +291,6 @@ Class:     C
 ## nl
 ### Help:
 ### Examples:
+## split
+### Help:
+### Examples:

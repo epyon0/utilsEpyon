@@ -2,7 +2,7 @@ CC = gcc
 WCC = x86_64-w64-mingw32-gcc
 CFLAGS = -W -Wall -Wextra -g
 
-all : ipcalc hexdump head nl base64
+all : ipcalc hexdump head nl base64 split
 
 base64 : ./src/base64.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/base64 ./src/base64.c
@@ -23,3 +23,7 @@ head : ./src/head.c ./lib/libEpyon/misc.h
 nl : ./src/nl.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/nl ./src/nl.c
 	$(WCC) $(CFLAGS) -o ./bin/nl.exe ./src/nl.c
+
+split : ./src/split.c ./lib/libEpyon/misc.h
+	$(CC)  $(CFLAGS) -o ./bin/split ./src/split.c
+	$(WCC) $(CFLAGS) -o ./bin/split.exe ./src/split.c

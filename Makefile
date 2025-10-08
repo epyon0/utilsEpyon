@@ -28,7 +28,7 @@ nl : ./src/nl.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/nl ./src/nl.c
 	$(WCC) $(CFLAGS) -o ./bin/nl.exe ./src/nl.c
 
-split : ./src/split.c libs
+split : ./src/split.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/split ./src/split.c
 	$(WCC) $(CFLAGS) -o ./bin/split.exe ./src/split.c
 

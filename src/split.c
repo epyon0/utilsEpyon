@@ -14,7 +14,8 @@
 
 char dBuff[1024] = {'\0'};
 char filename[256] = {'\0'};
-bool verboseValue;
+bool verboseValue, bytes = true;
+int length = 10 * 1024 * 1024;
 
 int split(FILE *fp);
 
@@ -33,20 +34,49 @@ int main(const int argc, const char *argv[]) {
 
             if ((strncmp(arg, "-h", sizeof("-h")) == 0) || (strncmp(arg, "--help", sizeof("--help")) == 0)) {
                 printf("\nSplit files or input into chunks\n\n%s <FILE>\nOR\ncat <FILE> | %s\n\n", argv[0], argv[0]);
-                printf("[-h || --help]    Print this help message\n");
-                printf("[-v || --verbose] Turn on verbose output\n");
-                printf("<FILE>            File to process\n");
+                printf("[-h || --help]        Print this help message\n");
+                printf("[-v || --verbose]     Turn on verbose output\n");
+                printf("[-b || --bytes] <INT> Put <INT> bytes per output file\n");
+                printf("[-l || --lines] <INT> Put <INT> lines per output file\n");
+                printf("<FILE>                File to process\n");
                 printf("\nReturn Values:\n");
                 printf("  0 = Success\n");
                 printf("  1 = File not accessible\n");
                 printf("  2 = No file or input stream given\n");
                 printf("  3 = Failed opening file\n");
                 printf("  4 = Failed closing file\n");
+                printf("  5 = Invalid byte length\n");
+                printf("  6 = Invalid line length\n");
 
                 printf("\n");
                 return 0;
             }
 
+            if (((strncmp(arg, "-l", sizeof("-l")) == 0) || (strncmp(arg, "--lines", sizeof("--lines")) == 0)) && ((i + 1) < argc)) {
+                length = atoi(argv[i+1]);
+                bytes = false;
+                if (length <= 0) {
+                    verboseValue = getverbose();
+                    setverbose(true);
+                    snprintf(dBuff, sizeof(dBuff), "Invalid line length: %d", length);
+                    verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+                    setverbose(verboseValue);
+                    exit(6);    
+                }
+            }
+
+            if (((strncmp(arg, "-b", sizeof("-b")) == 0) || (strncmp(arg, "--bytes", sizeof("--bytes")) == 0)) && ((i + 1) < argc)) {
+                length = atoi(argv[i+1]);
+                bytes = true;
+                if (length <= 0) {
+                    verboseValue = getverbose();
+                    setverbose(true);
+                    snprintf(dBuff, sizeof(dBuff), "Invalid byte length: %d", length);
+                    verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+                    setverbose(verboseValue);
+                    exit(5);
+                }
+            }
 
             if ((strncmp(arg, "-v", sizeof("-v")) == 0) || (strncmp(arg, "--verbose", sizeof("--verbose")) == 0)) {
                 continue;
@@ -71,6 +101,7 @@ int main(const int argc, const char *argv[]) {
         verbose("Filename not given", __FILE__, __LINE__, __FUNCTION__);
         if (!isatty(0)) {
             verbose("Detected STDIN", __FILE__, __LINE__, __FUNCTION__);
+            strncpy(filename, "stdin", sizeof("stdin"));
             int rc = split(stdin);
             exit(rc);
         } else {
@@ -84,7 +115,7 @@ int main(const int argc, const char *argv[]) {
         snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", filename);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
 
-        FILE *fp = fopen(filename, "r");
+        FILE *fp = fopen(filename, "rb");
 
         if (fp == NULL) {
             verboseValue = getverbose();
@@ -115,15 +146,36 @@ int main(const int argc, const char *argv[]) {
 int split(FILE *fp) {
     int rc;
     char buff;
+    uint64_t count = 0;
+    int lenCount = 0;
+    char tmpFilename[256] = {'\0'};
 
     while (true) {
         rc = fread(&buff, 1, 1, fp);
-    if (rc < 1) {
-        break;
-    }
+        if (rc < 1) {
+            break;
+        }
 
-    printf("%c", buff);
-    
+        snprintf(tmpFilename, sizeof(tmpFilename)/sizeof(tmpFilename[0]), "%s.%03d", filename, lenCount);
+        FILE *outfp = fopen(tmpFilename, "w");
+        if (outfp == NULL) {
+            //error out
+        }
+
+        if (bytes) {
+            for (int i = 0; i < length; i++) {
+                rc = fwrite(&buff, 1, 1, outfp);
+                if (rc != 1) {
+                    // error out
+                }
+            }
+            lenCount++;
+        }
+        rc = fclose(outfp);
+        if (rc != 0) {
+            // error out
+        }
+        count++;
     }
 
     return(0);

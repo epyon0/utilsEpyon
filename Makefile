@@ -4,6 +4,10 @@ CFLAGS = -W -Wall -Wextra -g
 
 all : ipcalc hexdump head nl base64 split
 
+libs :
+	cd ./lib/ && git clone https://github.com/epyon0/libEpyon.git
+	cd ./lib/libEpyon/ && git pull
+
 base64 : ./src/base64.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/base64 ./src/base64.c
 	$(WCC) $(CFLAGS) -o ./bin/base64.exe ./src/base64.c
@@ -24,6 +28,10 @@ nl : ./src/nl.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/nl ./src/nl.c
 	$(WCC) $(CFLAGS) -o ./bin/nl.exe ./src/nl.c
 
-split : ./src/split.c ./lib/libEpyon/misc.h
+split : ./src/split.c libs
 	$(CC)  $(CFLAGS) -o ./bin/split ./src/split.c
 	$(WCC) $(CFLAGS) -o ./bin/split.exe ./src/split.c
+
+clean :
+	rm -rf ./lib/*
+	rm ./bin/*

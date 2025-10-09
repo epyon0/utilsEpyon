@@ -36,17 +36,18 @@ int main(const int argc, const char *argv[]) {
                 printf("\nSplit files or input into chunks\n\n%s <FILE>\nOR\ncat <FILE> | %s\n\n", argv[0], argv[0]);
                 printf("[-h || --help]        Print this help message\n");
                 printf("[-v || --verbose]     Turn on verbose output\n");
-                printf("[-b || --bytes] <INT> Put <INT> bytes per output file\n");
+                printf("[-b || --bytes] <INT> Put <INT> bytes per output file, Default: %s\n", btos(length));
                 printf("[-l || --lines] <INT> Put <INT> lines per output file\n");
                 printf("<FILE>                File to process\n");
                 printf("\nReturn Values:\n");
                 printf("  0 = Success\n");
                 printf("  1 = File not accessible\n");
-                printf("  2 = No file or input stream given\n");
+                printf("  2 = No input file given\n");
                 printf("  3 = Failed opening file\n");
                 printf("  4 = Failed closing file\n");
                 printf("  5 = Invalid byte length\n");
                 printf("  6 = Invalid line length\n");
+                printf("  7 = Failed writing file\n");
 
                 printf("\n");
                 return 0;
@@ -63,6 +64,8 @@ int main(const int argc, const char *argv[]) {
                     setverbose(verboseValue);
                     exit(6);    
                 }
+                i++;
+                continue;
             }
 
             if (((strncmp(arg, "-b", sizeof("-b")) == 0) || (strncmp(arg, "--bytes", sizeof("--bytes")) == 0)) && ((i + 1) < argc)) {
@@ -76,6 +79,8 @@ int main(const int argc, const char *argv[]) {
                     setverbose(verboseValue);
                     exit(5);
                 }
+                i++;
+                continue;
             }
 
             if ((strncmp(arg, "-v", sizeof("-v")) == 0) || (strncmp(arg, "--verbose", sizeof("--verbose")) == 0)) {
@@ -101,7 +106,7 @@ int main(const int argc, const char *argv[]) {
         verbose("Filename not given", __FILE__, __LINE__, __FUNCTION__);
         if (!isatty(0)) {
             verbose("Detected STDIN", __FILE__, __LINE__, __FUNCTION__);
-            strncpy(filename, "stdin", sizeof("stdin"));
+            strncpy(filename, "STDIN", strlen("STDIN") + 1);
             int rc = split(stdin);
             exit(rc);
         } else {
@@ -156,24 +161,44 @@ int split(FILE *fp) {
             break;
         }
 
-        snprintf(tmpFilename, sizeof(tmpFilename)/sizeof(tmpFilename[0]), "%s.%03d", filename, lenCount);
+        snprintf(tmpFilename, 256, "%s.%04d", filename, lenCount);
+        snprintf(dBuff, sizeof(dBuff), "Output file \"%s\"", tmpFilename);
+        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+
+        snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", tmpFilename);
+        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
         FILE *outfp = fopen(tmpFilename, "w");
         if (outfp == NULL) {
-            //error out
+            verboseValue = getverbose();
+            setverbose(true);
+            snprintf(dBuff, sizeof(dBuff), "Failed opening file \"%s\"", tmpFilename);
+            verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+            setverbose(verboseValue);
+            exit(3);
         }
 
         if (bytes) {
             for (int i = 0; i < length; i++) {
                 rc = fwrite(&buff, 1, 1, outfp);
                 if (rc != 1) {
-                    // error out
+                    verboseValue = getverbose();
+                    setverbose(true);
+                    snprintf(dBuff, sizeof(dBuff), "Failed writing file \"%s\"", tmpFilename);
+                    verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+                    setverbose(verboseValue);
+                    exit(7);
                 }
             }
             lenCount++;
         }
         rc = fclose(outfp);
         if (rc != 0) {
-            // error out
+            verboseValue = getverbose();
+            setverbose(true);
+            snprintf(dBuff, sizeof(dBuff), "Failed closing file \"%s\"", tmpFilename);
+            verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+            setverbose(verboseValue);
+            exit(4);
         }
         count++;
     }

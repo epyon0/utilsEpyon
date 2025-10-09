@@ -4,8 +4,10 @@ CFLAGS = -W -Wall -Wextra -g
 
 all : ipcalc hexdump head nl base64 split
 
-libs :
+lib :
 	cd ./lib/ && git clone https://github.com/epyon0/libEpyon.git
+	cd ./lib/libEpyon/ && git pull
+lib-update :
 	cd ./lib/libEpyon/ && git pull
 
 base64 : ./src/base64.c ./lib/libEpyon/misc.h

@@ -294,3 +294,6 @@ Class:     C
 ## split
 ### Help:
 ### Examples:
+## tail
+### Help:
+### Examples:

@@ -154,6 +154,9 @@ int split(FILE *fp) {
     int lenCount = 0;
     char tmpFilename[256];
 
+    snprintf(dBuff, sizeof(dBuff), "Splitting file into %s segments", btos(length));
+    verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+
     while (true) {
         rc = fread(&buff, 1, 1, fp);
         if (rc < 1) {
@@ -183,9 +186,11 @@ int split(FILE *fp) {
             }
         }
 
+        snprintf(dBuff, sizeof(dBuff), "Closing file \"%s\"", tmpFilename);
+        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
         rc = fclose(outfp);
         if (rc != 0) {
-        verboseValue = getverbose();
+            verboseValue = getverbose();
             setverbose(true);
             snprintf(dBuff, sizeof(dBuff), "Failed closing file \"%s\"", tmpFilename);
             verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);

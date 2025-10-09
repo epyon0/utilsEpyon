@@ -151,9 +151,8 @@ int main(const int argc, const char *argv[]) {
 int split(FILE *fp) {
     int rc;
     char buff;
-    uint64_t count = 0;
     int lenCount = 0;
-    char tmpFilename[256] = {'\0'};
+    char tmpFilename[256];
 
     while (true) {
         rc = fread(&buff, 1, 1, fp);
@@ -161,46 +160,39 @@ int split(FILE *fp) {
             break;
         }
 
+        tmpFilename[0] = '\0';
         snprintf(tmpFilename, 256, "%s.%04d", filename, lenCount);
-        snprintf(dBuff, sizeof(dBuff), "Output file \"%s\"", tmpFilename);
-        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
-
         snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", tmpFilename);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
         FILE *outfp = fopen(tmpFilename, "w");
-        if (outfp == NULL) {
-            verboseValue = getverbose();
-            setverbose(true);
-            snprintf(dBuff, sizeof(dBuff), "Failed opening file \"%s\"", tmpFilename);
-            verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
-            setverbose(verboseValue);
-            exit(3);
+
+        for (int i = 0; i < length; i++) {
+            rc = fread(&buff, 1, 1, fp);
+            if (rc < 1) {
+                exit(0);
+            }
+            
+            rc = fwrite(&buff, 1, 1, outfp);
+            if (rc != 1) {
+                verboseValue = getverbose();
+                setverbose(true);
+                snprintf(dBuff, sizeof(dBuff), "Failed writing file \"%s\"", tmpFilename);
+                verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+                setverbose(verboseValue);
+                exit(7);  
+            }
         }
 
-        if (bytes) {
-            for (int i = 0; i < length; i++) {
-                rc = fwrite(&buff, 1, 1, outfp);
-                if (rc != 1) {
-                    verboseValue = getverbose();
-                    setverbose(true);
-                    snprintf(dBuff, sizeof(dBuff), "Failed writing file \"%s\"", tmpFilename);
-                    verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
-                    setverbose(verboseValue);
-                    exit(7);
-                }
-            }
-            lenCount++;
-        }
         rc = fclose(outfp);
         if (rc != 0) {
-            verboseValue = getverbose();
+        verboseValue = getverbose();
             setverbose(true);
             snprintf(dBuff, sizeof(dBuff), "Failed closing file \"%s\"", tmpFilename);
             verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
             setverbose(verboseValue);
             exit(4);
         }
-        count++;
+        lenCount++;
     }
 
     return(0);

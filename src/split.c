@@ -48,7 +48,7 @@ int main(const int argc, const char *argv[]) {
                 printf("  6 = Invalid line length\n");
                 printf("  7 = Failed writing file\n");
                 printf("\n");
-                
+
                 return 0;
             }
 
@@ -146,7 +146,10 @@ int split(FILE *fp) {
             break;
         }
 
-        tmpFilename[0] = '\0';
+        for (int i = 0; i < 256; i++) {
+            tmpFilename[i] = '\0';
+        }
+        
         snprintf(tmpFilename, 256, "%s.%04d", filename, lenCount);
         snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", tmpFilename);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);

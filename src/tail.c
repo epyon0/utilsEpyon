@@ -58,4 +58,52 @@ int main(const int argc, const char *argv[]) {
         }
     }
 
+    if (filename[0] == '\0') {
+        verbose("Filename not given", __FILE__, __LINE__, __FUNCTION__);
+        if (!isatty(0)) {
+            verbose("Detected STDIN", __FILE__, __LINE__, __FUNCTION__);
+            strncpy(filename, "STDIN", strlen("STDIN") + 1);
+            int rc = tail(stdin);
+            exit(rc);
+        } else {
+            verboseValue = getverbose();
+            setverbose(true);
+            verbose("No file or input stream given", __FILE__, __LINE__, __FUNCTION__);
+            setverbose(verboseValue);
+            exit(2);
+        }
+    } else {
+        snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", filename);
+        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+
+        FILE *fp = fopen(filename, "rb");
+
+        if (fp == NULL) {
+            verboseValue = getverbose();
+            setverbose(true);
+            snprintf(dBuff, sizeof(dBuff), "Failed opening file \"%s\"", filename);
+            verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+            setverbose(verboseValue);
+            exit(3);
+        }
+
+        int rc = tail(fp);
+
+        snprintf(dBuff, sizeof(dBuff), "Closing file \"%s\"", filename);
+        verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+        int err = fclose(fp);
+        if (err != 0) {
+            verboseValue = getverbose();
+            setverbose(true);
+            snprintf(dBuff, sizeof(dBuff), "Failed closing file \"%s\"", filename);
+            verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+            setverbose(verboseValue);
+            exit(4);
+        }
+        exit(rc);
+    }
+}
+
+int tail(FILE *fp) {
+
 }

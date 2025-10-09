@@ -12,6 +12,7 @@
 char dBuff[1024] = {'\0'};
 bool verboseValue, follow = false;
 char filename[256] = {'\0'};
+int lineLimit = 10;
 
 int main(const int argc, const char *argv[]) {
     if (argc > 1) {
@@ -28,7 +29,9 @@ int main(const int argc, const char *argv[]) {
 
             if ((strncmp(arg, "-h", sizeof("-h")) == 0) || (strncmp(arg, "--help", sizeof("--help")) == 0)) {
                 printf("\nDisplay portion of the ending of a file\n\n%s <FILE>\nOR\ncat <FILE> | %s\n\n", argv[0], argv[0]);
-                printf("[-h || --help]   Print this help message\n");
+                printf("[-h || --help]         Print this help message\n");
+                printf("[-n || --lines] <INT>  Print the last <INT> lines, Default: %d\n", lineLimit);
+                printf("[-f || --folow]        Append data as the file grows\n");
                 printf("\nReturn Values:\n");
                 printf("  0 = Success\n");
                 printf("  1 = File not accessible\n");
@@ -37,8 +40,16 @@ int main(const int argc, const char *argv[]) {
                 return 0;
             }
 
+            if ((strncmp(arg, "-f", sizeof("-f")) == 0) || (strncmp(arg, "--follow", sizeof("--follow")) == 0)) {
+                follow = true;
+                continue;
+            }
 
-
+            if (((strncmp(arg, "-n", sizeof("-n")) == 0) || (strncmp(arg, "--lines", sizeof("--lines")) == 0)) && (i + 1 < argc)) {
+                lineLimit = atoi(argv[i+1]);
+                i++;
+                continue;
+            }
 
             if ((strncmp(arg, "-v", sizeof("-v")) == 0) || (strncmp(arg, "--verbose", sizeof("--verbose")) == 0)) {
                 continue;
@@ -76,7 +87,7 @@ int main(const int argc, const char *argv[]) {
         snprintf(dBuff, sizeof(dBuff), "Opening file \"%s\"", filename);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
 
-        FILE *fp = fopen(filename, "rb");
+        FILE *fp = fopen(filename, "r");
 
         if (fp == NULL) {
             verboseValue = getverbose();
@@ -91,7 +102,9 @@ int main(const int argc, const char *argv[]) {
 
         snprintf(dBuff, sizeof(dBuff), "Closing file \"%s\"", filename);
         verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
+
         int err = fclose(fp);
+        
         if (err != 0) {
             verboseValue = getverbose();
             setverbose(true);
@@ -106,4 +119,5 @@ int main(const int argc, const char *argv[]) {
 
 int tail(FILE *fp) {
 
+    return 0;
 }

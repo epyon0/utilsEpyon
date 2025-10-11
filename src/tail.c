@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include "../lib/libEpyon/misc.h" // git clone git@github.com:epyon0/libEpyon.git
 
 #ifdef WIN32
@@ -13,6 +15,9 @@ char dBuff[1024] = {'\0'};
 bool verboseValue, follow = false;
 char filename[256] = {'\0'};
 int lineLimit = 10;
+int maxLine = 1024 * 200;
+
+int tail(FILE *fp);
 
 int main(const int argc, const char *argv[]) {
     if (argc > 1) {
@@ -25,7 +30,7 @@ int main(const int argc, const char *argv[]) {
         for (int i = 1; i < argc; i++) {
             const char *arg = argv[i];
             snprintf(dBuff, sizeof(dBuff), "Processing argument: %s", arg);
-            verbose(dBuff, __FILE__, __LINE__, __FUNCTION);
+            verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
 
             if ((strncmp(arg, "-h", sizeof("-h")) == 0) || (strncmp(arg, "--help", sizeof("--help")) == 0)) {
                 printf("\nDisplay portion of the ending of a file\n\n%s <FILE>\nOR\ncat <FILE> | %s\n\n", argv[0], argv[0]);
@@ -118,6 +123,29 @@ int main(const int argc, const char *argv[]) {
 }
 
 int tail(FILE *fp) {
+    char *strBuf[lineLimit];
+    char ch;
+    int lineStart = 0;
 
+    while (fgets(strBuf[lineLimit - 1], maxLine, fp)) {
+        // shift array strBuf left
+    }
+
+    // print strBuf array
+
+    if(follow) {
+        // keep reading file handler
+        /*
+        while(true) {
+            fread(fp...)
+            if rc == 1 {
+            // print ch
+            } else {
+             do nothing
+            }
+        }*/
+    }
+
+    printf("\n");
     return 0;
 }

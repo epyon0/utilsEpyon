@@ -123,16 +123,21 @@ int main(const int argc, const char *argv[]) {
 }
 
 int tail(FILE *fp) {
-    char *strBuf[lineLimit];
+    char *strBuf[lineLimit + 1];
     char ch;
     int lineStart = 0;
 
-    while (fgets(strBuf[lineLimit - 1], maxLine, fp)) {
+    while (fgets(strBuf[lineLimit], maxLine, fp)) {
         // shift array strBuf left
+        for (int i = 1; i <= lineLimit; i++) {
+            strBuf[i - 1] = strBuf[i];
+        }
     }
 
     // print strBuf array
-
+    for (int i = 0; i <= lineLimit; i++) {
+        printf("%s", strBuf[i]);
+    }
     if(follow) {
         // keep reading file handler
         /*

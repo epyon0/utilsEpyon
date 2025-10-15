@@ -12,7 +12,7 @@
 #endif
 
 char dBuff[1024] = {'\0'}, filename[256] = {'\0'};
-unsigned long long lineCount = 0, wordCount = 0, byteCount = 0, charCount = 0;
+long lineCount = 0, wordCount = 0, byteCount = 0, charCount = 0;
 bool verboseValue = false, byteFlag = false, charFlag = false, lineFlag = false, wordFlag = false;
 
 int wc(FILE *fp);
@@ -20,7 +20,7 @@ int wc(FILE *fp);
 int main(const int argc, const char *argv[]) {
     if (argc > 1) {
         for (int i = 1; i < argc; i++) {
-            if ((strncmp(argv[i], "-v", sizeof("-v")) == 0) || (strncmp(argv[i], "--verbose", sizeof("--verbose")) == 0)) {
+            if (!strncmp(argv[i], "-v", sizeof("-v")) || !strncmp(argv[i], "--verbose", sizeof("--verbose"))) {
                 setverbose(true);
                 break;
             }
@@ -30,7 +30,7 @@ int main(const int argc, const char *argv[]) {
             snprintf(dBuff, sizeof(dBuff), "Processing argument: %s", arg);
             verbose(dBuff, __FILE__, __LINE__, __FUNCTION__);
 
-            if ((strncmp(arg, "-h", sizeof("-h")) == 0) || (strncmp(arg, "--help", sizeof("--help")) == 0)) {
+            if (!strncmp(arg, "-h", sizeof("-h")) || !strncmp(arg, "--help", sizeof("--help"))) {
                 printf("\nDisplay line, word, and byte counts for each input stream\n\n%s <FILE>\nOR\ncat <FILE> | %s\n\n", argv[0], argv[0]);
                 printf("[-h || --help]    Print this help message\n");
                 printf("[-v || --verbose] Turn on verbose output\n");
@@ -50,27 +50,27 @@ int main(const int argc, const char *argv[]) {
                 return 0;
             }
 
-            if ((strncmp(arg, "-c", sizeof("-c")) == 0) || (strncmp(arg, "--bytes", sizeof("--bytes")) == 0)) {
+            if (!strncmp(arg, "-c", sizeof("-c")) || !strncmp(arg, "--bytes", sizeof("--bytes"))) {
                 byteFlag = true;
                 continue;
             }
 
-            if ((strncmp(arg, "-m", sizeof("-m")) == 0) || (strncmp(arg, "--chars", sizeof("--chars")) == 0)) {
+            if (!strncmp(arg, "-m", sizeof("-m")) || !strncmp(arg, "--chars", sizeof("--chars"))) {
                 charFlag = true;
                 continue;
             }
 
-            if ((strncmp(arg, "-l", sizeof("-l")) == 0) || (strncmp(arg, "--lines", sizeof("--lines")) == 0)) {
+            if (!strncmp(arg, "-l", sizeof("-l")) || !strncmp(arg, "--lines", sizeof("--lines"))) {
                 lineFlag = true;
                 continue;
             }
 
-            if ((strncmp(arg, "-w", sizeof("-w")) == 0) || (strncmp(arg, "--words", sizeof("--words")) == 0)) {
+            if (!strncmp(arg, "-w", sizeof("-w")) || !strncmp(arg, "--words", sizeof("--words"))) {
                 wordFlag = true;
                 continue;
             }
 
-            if ((strncmp(arg, "-v", sizeof("-v"))) || (strncmp(arg, "--verbose", sizeof("--verbose")))) {
+            if (!strncmp(arg, "-v", sizeof("-v")) || !strncmp(arg, "--verbose", sizeof("--verbose"))) {
                 continue;
             }
             if (access(arg, F_OK) == 0) {
@@ -133,5 +133,33 @@ int main(const int argc, const char *argv[]) {
 }
 
 int wc(FILE *fp) {
+    char ch;
+    int rc;
+
+    rc = fseek(fp, 0L, SEEK_END);
+    if (rc) {
+        // error
+    }
+    byteCount = ftell(fp);
+    if (byteCount == -1L) {
+        // error
+    }
+    rc = fseek(fp, 0L, SEEK_SET);
+    if (rc) {
+        // error
+    }
+
+    if (charFlag) {
+
+    }
+
+    if (lineFlag) {
+
+    }
+
+    if (wordFlag) {
+        
+    }
+
     return 0;
 }

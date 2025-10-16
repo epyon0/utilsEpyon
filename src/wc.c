@@ -133,32 +133,44 @@ int main(const int argc, const char *argv[]) {
 }
 
 int wc(FILE *fp) {
-    char ch;
+    char ch, chPrev = '\0';
     int rc;
 
-    rc = fseek(fp, 0L, SEEK_END);
-    if (rc) {
-        // error
-    }
-    byteCount = ftell(fp);
-    if (byteCount == -1L) {
-        // error
-    }
-    rc = fseek(fp, 0L, SEEK_SET);
-    if (rc) {
-        // error
-    }
+    // dont use fseek to get bytecount because of stdin
+    while(fread(&ch, 1, 1, fp) == 1) {
+        byteCount++;
 
-    if (charFlag) {
+        if (((ch & 0x80) == 0) || ((ch & 0xE0) == 0xC0) || ((ch & 0xF0) == 0xE0) || ((ch & 0xF8) == 0xF0)) {
+            charCount++;
+        }
 
-    }
+        if (((chPrev == '\t') || (chPrev == ' ')) && ((ch != '\t') && (ch != ' '))) {
+            wordCount++;
+        }
 
-    if (lineFlag) {
+        if (ch == '\n') {
+            lineCount++;
+        }
 
+        chPrev = ch;
     }
 
-    if (wordFlag) {
-        
+    if (!charFlag && !byteFlag && !wordFlag && !lineFlag) {
+            printf("% 6ld% 6ld% 6ld %s\n", lineCount, wordCount, charCount, filename);
+    } else {
+        if (lineFlag) {
+            printf("% 6ld ", lineCount);
+        }
+        if (wordFlag) {
+            printf("% 6ld ", wordCount);
+        }
+        if (charFlag) {
+            printf("% 6ld ", charCount);
+        }
+        if (byteFlag) {
+            printf("% 6ld ", byteCount);
+        }
+        printf("%s\n", filename);
     }
 
     return 0;

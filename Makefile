@@ -11,35 +11,35 @@ lib-update :
 	cd ./lib/libEpyon/ && git pull
 
 base64 : ./src/base64.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 ipcalc : ./src/ipcalc.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 hexdump : ./src/hexdump.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 head : ./src/head.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 nl : ./src/nl.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 split : ./src/split.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 tail : ./src/tail.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 wc : ./src/wc.c ./lib/libEpyon/misc.h
-	$(CC)  $(CFLAGS) -o ./bin/$@ ./src/$@.c
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 clean :

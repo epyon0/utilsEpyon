@@ -297,3 +297,16 @@ Class:     C
 ## tail
 ### Help:
 ### Examples:
+## sort
+### Help:
+### Examples:
+## uniq
+### Help:
+### Examples:
+## wc
+### Help:
+### Examples:
+## zls
+Show conents of a zip file
+### Help:
+### Examples:

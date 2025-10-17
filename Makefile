@@ -2,7 +2,7 @@ CC = gcc
 WCC = x86_64-w64-mingw32-gcc
 CFLAGS = -W -Wall -Wextra -g
 
-all : ipcalc hexdump head nl base64 split tail wc
+all : ipcalc hexdump head nl base64 split tail wc zs
 
 lib :
 	cd ./lib/ && git clone https://github.com/epyon0/libEpyon.git
@@ -39,6 +39,10 @@ tail : ./src/tail.c ./lib/libEpyon/misc.h
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
 wc : ./src/wc.c ./lib/libEpyon/misc.h
+	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
+	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
+
+zls : ./src/zls.c ./lib/libEpyon/misc.h
 	$(CC)  $(CFLAGS) -o ./bin/$@     ./src/$@.c
 	$(WCC) $(CFLAGS) -o ./bin/$@.exe ./src/$@.c
 
